@@ -17,8 +17,8 @@ Create a short, focused commit message and commit staged changes.
     - `git add -A`
 4. **Create short commit message**
     - Base the message on the actual changes in the diff
-    - Example: `git commit -m "fix(auth): handle expired token refresh"`
-    - Example with issue key: `git commit -m "PROJ-123: fix(auth): handle expired token refresh"`
+    - Example: `git commit -m "fix(auth): Handle expired token refresh"`
+    - Example with issue key: `git commit -m "PROJ-123: fix(auth): Handle expired token refresh"`
 
 ## Template
 
