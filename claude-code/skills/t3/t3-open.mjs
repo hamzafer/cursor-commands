@@ -32,7 +32,8 @@ function findT3() {
 // A Code Mode chat records its tool list (REPL and Poll) in its api-request-shape lines.
 // Read line by line and look only at those records, so text quoted elsewhere in the chat doesn't count.
 async function usesCodeMode(transcript) {
-  const lines = createInterface({ input: createReadStream(transcript, 'utf8'), crlfDelay: Infinity });
+  const input = createReadStream(transcript, 'utf8');
+  const lines = createInterface({ input, crlfDelay: Infinity });
   try {
     for await (const line of lines) {
       if (!line.startsWith('{"type":"api-request-shape"')) continue;
@@ -44,6 +45,7 @@ async function usesCodeMode(transcript) {
     return false;
   } finally {
     lines.close();
+    input.destroy();
   }
 }
 
@@ -125,12 +127,14 @@ async function main() {
   if (!transcript) fail('Could not find this chat in ' + configDirs.map((d) => join(d, 'projects')).join(' or ') + '.');
 
   let cwd = null;
-  const lines = createInterface({ input: createReadStream(transcript, 'utf8'), crlfDelay: Infinity });
+  const input = createReadStream(transcript, 'utf8');
+  const lines = createInterface({ input, crlfDelay: Infinity });
   for await (const line of lines) {
     if (!line.includes('"cwd"')) continue;
     try { const r = JSON.parse(line); if (typeof r.cwd === 'string') { cwd = r.cwd; break; } } catch {}
   }
   lines.close();
+  input.destroy();
   if (!cwd) fail('Could not read the folder this chat started in.');
 
   // Code Mode chats (experimental) can only be resumed in the terminal, so T3 would fail on the first message.
@@ -172,9 +176,10 @@ async function main() {
         project = find(await rpc(runtime.origin, issued.token, 'agentSessions.scan', {}));
       }
       if (!project?.projectId) throw new Error('T3 Code doesn\'t import chats from ' + cwd + '.');
+      // From here T3 may have imported chats into the project even if the call fails, so keep it.
+      addedProject = false;
       const result = await rpc(runtime.origin, issued.token, 'agentSessions.import', { projectId: project.projectId, expectedWorkspaceRoot: project.path });
       imported = true;
-      addedProject = false;
       note = 'Imported ' + result.importedCount + ' chat(s) from ' + project.path + '.';
     } catch (e) {
       error = e;
