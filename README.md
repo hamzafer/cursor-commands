@@ -137,6 +137,12 @@ Example structure:
 - `git-commit.md` – Create well-structured commit messages with optional issue key linking
 - `git-push.md` – Push changes to remote with pre-push checks
 
+## Claude Code skills
+
+Slash commands for [Claude Code](https://code.claude.com), in `claude-code/skills/`. Copy a skill's folder into `~/.claude/skills/` to install it.
+
+- [`/t3`](claude-code/skills/t3/) – Open the current Claude Code chat in the [T3 Code](https://github.com/pingdotgg/t3code) desktop app, importing it first if needed
+
 ## Quick start
 
 1. Clone this repository or copy the `.cursor/commands/` directory into your project
