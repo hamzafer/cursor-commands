@@ -6,10 +6,10 @@ disable-model-invocation: true
 
 # /t3: continue this chat in T3 Code
 
-1. Run the script from the shell (it reads `CLAUDE_CODE_SESSION_ID` itself):
+1. Run `t3-open.mjs` from this skill's base directory (shown above as "Base directory for this skill"). It reads `CLAUDE_CODE_SESSION_ID` itself:
 
    ```bash
-   node ~/.claude/skills/t3/t3-open.mjs
+   node "<base directory>/t3-open.mjs"
    ```
 
 2. It prints one JSON line.

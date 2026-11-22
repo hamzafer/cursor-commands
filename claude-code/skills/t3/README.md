@@ -12,7 +12,7 @@ mkdir -p ~/.claude/skills
 cp -R cursor-commands/claude-code/skills/t3 ~/.claude/skills/t3
 ```
 
-Restart Claude Code (or run `/reload-skills`), then type `/t3` in any chat.
+Restart Claude Code (or run `/reload-skills`), then type `/t3` in any chat. If `t3` isn't on your `PATH`, the script also looks in `~/.local/bin` and `$T3CODE_INSTALL_BIN_DIR`.
 
 ## What happens
 
@@ -26,8 +26,9 @@ Restart Claude Code (or run `/reload-skills`), then type `/t3` in any chat.
 - **Exit the terminal before typing in T3.** Both write to the same transcript. If both continue from the same message, the chat splits into two branches that can't see each other's new messages.
 - **Code Mode chats can't move.** Chats started with `CLAUDE_CODE_EXPERIMENTAL_CODE_MODE=1` can only be resumed in the terminal for now. `/t3` checks for this and stops.
 - **T3 shows the chat as of its first import.** Running `/t3` again later won't add the newer messages to T3's view. Claude still loads the full chat when you continue in T3.
-- **T3 imports the whole folder.** Its importer brings in every recent chat from the chat's folder, not just this one.
-- **Only the last 30 days.** T3 doesn't import older chats.
+- **T3 imports the whole folder.** Its importer brings in the folder's recent chats (up to 100), not just this one, and up to 200 messages per chat.
+- **Worktrees count as the main checkout.** A chat started in a git worktree lands in the project for the main checkout.
+- **Only chats with a reply, from the last 30 days.** T3 skips older chats and chats where Claude hasn't answered yet.
 
 ## A second Claude account
 
@@ -36,7 +37,7 @@ If you run another account with `CLAUDE_CONFIG_DIR` (for example `~/.claude-work
 1. In T3, open Settings, Providers, Add provider, pick Claude and set `CLAUDE_CONFIG_DIR path` to that folder.
 2. Copy this folder into that account's `skills` folder as well.
 
-`/t3` picks the T3 provider that matches the chat's account.
+`/t3` picks the T3 provider that matches the chat's account. It reads the folder from the provider's `CLAUDE_CONFIG_DIR path` or its `CLAUDE_CONFIG_DIR` environment variable.
 
 ## Uninstall
 
